@@ -14,7 +14,7 @@ def get_scan_ops(config_path):
 
 
 def get_stats(directory, scan_ops):
-    files = [sys.argv[1] + "/" + f for f in os.listdir(directory) if f.endswith(".tar")]
+    files = [sys.argv[1] + "/" + f for f in os.listdir(directory) if f.endswith(".tar") and "result" in f]
     ret_val = {}
     for f in files:
         stat = os.stat(f)
