@@ -3,9 +3,7 @@ import sys
 import tarfile
 import json
 import datetime
-import collections
-import csv
-
+import common
 
 def get_scan_ops(config_path):
     with open(config_path) as f_json:
@@ -31,32 +29,14 @@ def get_stats(directory, scan_ops):
     return ret_val
 
 
-def write_results(stats):
-    with open("results.csv", "wb") as csv_file:
-        writer = csv.writer(csv_file)
-        for key, value in collections.OrderedDict(sorted(stats.items())).items():
-            writer.writerow([key, value])
-
-
-def evaluate_results(stats):
-    max_throughput = max(stats.values())
-    min_throughput = min(stats.values())
-    diff = max_throughput - min_throughput
-    percentage_diff = (diff / max_throughput) * 100
-    print "Percentage difference : {}".format(percentage_diff)
-    if percentage_diff > 10:
-        return False
-    return True
-
-
 def main():
     scan_ops = get_scan_ops(sys.argv[1] + "/containers/cbindexperf/config.json")
     stats = get_stats(sys.argv[1], scan_ops)
-    write_results(stats)
-    if evaluate_results(stats):
-        print "Test Passed!"
+    common.write_results("throughput.csv", stats)
+    if common.evaluate_results(stats):
+        print "Throughput: Test Passed!"
     else:
-        print "Test Failed"
+        print "Throughput: Test Failed"
 
 
 if __name__ == "__main__":
